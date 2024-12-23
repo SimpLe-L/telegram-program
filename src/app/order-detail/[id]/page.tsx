@@ -1,7 +1,7 @@
 import BackHeader from "@/components/back-header"
 import Image from "next/image"
 
-const OrderDetail = () => {
+const OrderDetail = ({ params: { id = "" } }) => {
   return (
     <div className="min-h-dvh bg-background flex flex-col gap-10 py-7 px-7">
       <BackHeader title="Order Detail" color="text-black" />

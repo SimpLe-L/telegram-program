@@ -13,7 +13,7 @@ import {
 import Order from "@/components/order-form"
 import BackHeader from "@/components/back-header"
 
-const CompanionDetail = () => {
+const CompanionDetail = ({ params: { id = "" } }) => {
 
   // const router = useRouter()
   // const backHospital = () => {

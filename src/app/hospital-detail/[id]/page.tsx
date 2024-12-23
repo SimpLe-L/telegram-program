@@ -47,7 +47,7 @@ const companionList = [
   },
 ]
 
-const HospitalDetails = ({ id }: { id: string }) => {
+const HospitalDetails = ({ params: { id = "" } }) => {
 
   const [active, setActive] = useState(0);
   const router = useRouter()
