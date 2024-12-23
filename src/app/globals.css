@@ -13,7 +13,7 @@
   --bg-radio: #30C084;
   --bg-profile: rgba(255, 255, 255, 0.15);
   --bg-confirm: rgba(113, 193, 243, 0.2);
-  --btn-color: #129090
+  --btn-color: #129090;
 }
 
 html,
@@ -30,9 +30,11 @@ body {
   box-sizing: border-box;
   background-color: #fafafb;
 }
+
 .amap-logo {
   opacity: 0 !important;
 }
+
 .amap-copyright {
   opacity: 0 !important;
 }
