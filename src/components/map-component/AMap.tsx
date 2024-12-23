@@ -43,7 +43,7 @@ const AMap = () => {
   return (
     <div
       id="container"
-      className="w-full h-[400px]"
+      className="w-full h-[300px]"
     ></div>
   )
 }

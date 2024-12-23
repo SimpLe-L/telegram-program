@@ -27,7 +27,7 @@ const OrderList = [
 
 const Profile = () => {
   return (
-    <div className="min-h-dvh bg-[--btn-color] flex flex-col relative">
+    <div className="min-h-dvh bg-[--btn-color] flex flex-col relative pb-7">
       <div className="absolute left-[30px] top-[30px]">
         <BackIcon iconColor={false} />
       </div>

@@ -60,7 +60,7 @@ const HospitalDetails = ({
   }
 
   return (
-    <div className="min-h-dvh bg-background flex flex-col">
+    <div className="min-h-dvh bg-background flex flex-col pb-7">
       <section>
         <div className="w-full h-[270px] bg-[url('/hospital-detail.png')] bg-no-repeat bg-cover flex flex-col justify-between pt-7 relative">
           <div className="flex w-full justify-center items-center relative h-10">

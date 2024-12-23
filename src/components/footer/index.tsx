@@ -12,7 +12,7 @@ import Order from "@/components/order-form"
 
 const FooterComponent = () => {
   return (
-    <div className="w-full h-[75px] rounded-t-[20px] fixed bottom-0 shadow-bar px-16 flex items-start justify-between">
+    <div className="w-full h-[75px] rounded-t-[20px] bg-white fixed bottom-0 shadow-bar px-16 flex items-start justify-between">
       <div className="flex flex-col gap-1 mt-4">
         <House />
         <span className="text-[#8E8E93] text-[10px]">Home</span>

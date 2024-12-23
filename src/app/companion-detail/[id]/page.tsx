@@ -25,7 +25,7 @@ const CompanionDetail = ({
   // }
 
   return (
-    <div className="w-full h-dvh py-7 px-7 flex flex-col">
+    <div className="w-full min-h-dvh py-7 px-7 flex flex-col">
       <BackHeader title="Find Your Medical Companion" color="text-black" />
       <div className="flex mt-10 gap-6">
         <div className="w-[106px] h-[158px] rounded-[20px] bg-red-500"></div>
@@ -53,7 +53,7 @@ const CompanionDetail = ({
         </div>
       </div>
 
-      <div className="mt-5 rounded-[20px] shadow-user flex-1 pt-2 px-6 flex flex-col justify-between pb-5">
+      <div className="mt-5 rounded-[20px] shadow-user flex-1 pt-2 px-6 flex flex-col gap-4 justify-between pb-5">
         <div className="flex flex-col gap-4 ">
           <div className="flex flex-col gap-6">
             <span className="text-[--text-basic] text-lg">Biography</span>

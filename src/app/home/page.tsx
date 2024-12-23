@@ -41,8 +41,8 @@ const HomePage = () => {
   }
 
   return (
-    <div className="h-dvh">
-      <div className="min-h-[400px]">
+    <div className="h-dvh pb-[100px]">
+      <div className="min-h-[300px]">
         <AMap />
       </div>
       {/* <DynamicMap /> */}
