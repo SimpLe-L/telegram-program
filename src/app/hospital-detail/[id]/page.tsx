@@ -47,7 +47,11 @@ const companionList = [
   },
 ]
 
-const HospitalDetails = ({ params }: { params: { id: string } }) => {
+const HospitalDetails = ({
+  params
+}: {
+  params: Promise<{ id: string }>
+}) => {
 
   const [active, setActive] = useState(0);
   const router = useRouter()

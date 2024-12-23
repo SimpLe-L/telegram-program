@@ -42,8 +42,10 @@ const HomePage = () => {
 
   return (
     <div className="h-dvh">
-      <AMap />
-      {/* <div className="w-full h-[400px]"></div> */}
+      <div className="min-h-[400px]">
+        <AMap />
+      </div>
+      {/* <DynamicMap /> */}
       <div className="flex flex-col mt-4 gap-2 px-7">
         <div className="flex flex-col gap-1">
           <span className="text-[20px] font-bold">Near by Hospital</span>
