@@ -11,7 +11,7 @@ const ConfirmPage = () => {
         <div className="w-[110px] h-[110px] rounded-full bg-[--bg-confirm] flex justify-center items-center">
           <Image src="/confirm.svg" width={120} height={120} alt="confirm" />
         </div>
-        <span className="text-black text-2xl font-bold">Oeder Confirmed!</span>
+        <span className="text-black text-2xl font-bold">Order Confirmed!</span>
 
         <Link href="/home">
           <div className="w-[276px] h-[62px] rounded-2xl bg-[--btn-color] flex justify-center items-center text-lg text-white">Back to home</div>

@@ -3,7 +3,7 @@
 import type { PrivyClientConfig } from "@privy-io/react-auth";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { sepolia } from "viem/chains";
+import { sepolia, flowTestnet } from "viem/chains";
 import { http, createConfig, WagmiProvider } from 'wagmi'
 import { injected, walletConnect } from 'wagmi/connectors'
 
@@ -26,14 +26,14 @@ const privyConfig: PrivyClientConfig = {
     showWalletLoginFirst: false,
     walletChainType: "ethereum-only",
   },
-  defaultChain: sepolia,
+  defaultChain: flowTestnet,
   supportedChains: [
-    sepolia,
+    flowTestnet,
   ],
 };
 const config = createConfig({
   // chains: [mainnet, sepolia, anvil],
-  chains: [sepolia],
+  chains: [flowTestnet],
   connectors: [
     injected(),
     // metaMask(),
@@ -42,7 +42,7 @@ const config = createConfig({
   transports: {
     // [anvil.id]: http(),
     // [mainnet.id]: http(),
-    [sepolia.id]: http(),
+    [flowTestnet.id]: http(),
   },
 })
 const PrivyProviderWrapper = ({ children }: { children: React.ReactNode }) => {

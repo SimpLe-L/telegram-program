@@ -31,7 +31,6 @@ const HospitalCard = ({ info }: CardProps) => {
       </div>
       <div className="size-11 rounded-full bg-[--bg-green] flex flex-col justify-center items-center">
         <span className="text-bold text-[--btn-color]">{info.level}</span>
-        {/* <span>{info.type}</span> */}
       </div>
     </div>
   )

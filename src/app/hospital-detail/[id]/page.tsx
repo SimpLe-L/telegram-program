@@ -6,6 +6,11 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import CompanionCard from "./card"
 import Link from "next/link"
+import { hospitals } from "@/data"
+import { useParams } from 'next/navigation'
+import { useReadContract } from 'wagmi';
+import { RegistryAbi } from "@/abis/registry"
+import useStore from "@/store/index";
 
 const companionTypes = [
   {
@@ -28,33 +33,22 @@ const companionTypes = [
   },
 ]
 
-const companionList = [
-  {
-    icon: "/hospital.svg",
-    id: "escort01",
-    name: "susan",
-    introduction: "familiar with neurosurgery",
-    customers: 10,
-    score: 4.2
-  },
-  {
-    icon: "/hospital.svg",
-    id: "escort02",
-    name: "lisi",
-    introduction: "familiar with cardiology",
-    customers: 50,
-    score: 4.6
-  },
-]
 
-const HospitalDetails = ({
-  params
-}: {
-  params: Promise<{ id: string }>
-}) => {
+const HospitalDetails = () => {
 
-  const [active, setActive] = useState(0);
+  const params = useParams<{ id: string }>()
   const router = useRouter()
+  const setHospital = useStore((state) => state.setHospital)
+  setHospital(params.id)
+  const getHospital = hospitals.find(item => item.id === params.id)
+  const [active, setActive] = useState(0);
+
+  const { data: companionList } = useReadContract({
+    abi: RegistryAbi,
+    address: process.env.NEXT_PUBLIC_REGISTRY_ADDRESS as `0x${string}`,
+    functionName: 'getAllCompanions'
+  });
+
   const backHome = () => {
     router.push("/home")
   }
@@ -70,20 +64,20 @@ const HospitalDetails = ({
             <span className="text-white text-lg font-bold">Hospitals Details</span>
           </div>
           <div className="absolute -bottom-[2px] w-full px-7 rounded-t-[30px] h-[58px] text-lg font-bold bg-background flex justify-start items-center">
-            成都军区总医院
+            {getHospital?.name}
           </div>
         </div>
         <div className="flex flex-col gap-3 px-7">
           <div className="flex gap-2 h-10 justify-start items-center">
             <Image src="/position.svg" width={13} height={15} alt="position" />
-            <span className="text-[--text-basic] text-sm">四川省成都市武侯区国学巷37号‌</span>
+            <span className="text-[--text-basic] text-sm">{getHospital?.position}</span>
           </div>
           <div className="flex justify-between">
             <div className="flex gap-4">
               <Image src="/rating.svg" width={40} height={40} alt="rating" />
               <div className="flex flex-col justify-between">
                 <span className="text-[--text-basic] text-base">Rating</span>
-                <span className="text-[--text-basic] text-base">4.5 out of 5</span>
+                <span className="text-[--text-basic] text-base">{getHospital?.score} out of 5</span>
               </div>
             </div>
             <div className="flex gap-4">
@@ -96,7 +90,7 @@ const HospitalDetails = ({
           </div>
           <div className="flex flex-col gap-1">
             <span className="text-lg font-bold">Overview</span>
-            <p className="text-[#707070] text-[12px] py-4">The hospital is providing cardiology services by 2 modern cath-lab and round the clock CCU facility including cardiac surgery.</p>
+            <p className="text-[#707070] text-[12px] py-4">{getHospital?.overview}</p>
           </div>
           <div className="w-full h-[1px] bg-[#E5E5EA]"></div>
         </div>
@@ -138,7 +132,7 @@ const HospitalDetails = ({
 
           <div className="flex flex-col">
             {
-              companionList.map(item => <Link href={`/companion-detail/${item.id}`} key={item.id}>
+              companionList && companionList.map(item => <Link href={`/companion-detail/${item.addr}`} key={item.addr}>
                 <CompanionCard info={item} />
               </Link>)
             }

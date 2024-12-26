@@ -22,7 +22,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
+import { useReadContract } from "wagmi";
+import { RegistryAbi } from "@/abis/registry";
+import { hospitals } from "@/data";
 
 const formSchema = z.object({
   hospitalName: z.string({
@@ -47,6 +49,12 @@ const formSchema = z.object({
 
 
 const Order = () => {
+
+  const { data: companionList } = useReadContract({
+    abi: RegistryAbi,
+    address: process.env.NEXT_PUBLIC_REGISTRY_ADDRESS as `0x${string}`,
+    functionName: 'getAllCompanions'
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -81,9 +89,9 @@ const Order = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="m@example.com">m@example.com</SelectItem>
-                    <SelectItem value="m@google.com">m@google.com</SelectItem>
-                    <SelectItem value="m@support.com">m@support.com</SelectItem>
+                    {
+                      hospitals.map((item) => <SelectItem value={item.name} key={item.id}>{item.name}</SelectItem>)
+                    }
                   </SelectContent>
                 </Select>
               </FormControl>
@@ -134,9 +142,11 @@ const Order = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="m@example.com">m@example.com</SelectItem>
-                    <SelectItem value="m@google.com">m@google.com</SelectItem>
-                    <SelectItem value="m@support.com">m@support.com</SelectItem>
+                    {
+                      companionList?.map((item) => {
+                        return <SelectItem value={item.addr}>{item.name}</SelectItem>
+                      })
+                    }
                   </SelectContent>
                 </Select>
               </FormControl>

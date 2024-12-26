@@ -22,7 +22,17 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
+import { hospitals } from "@/data";
+import { useReadContract, useWriteContract, type BaseError } from "wagmi";
+import { RegistryAbi } from "@/abis/registry";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { OrderAbi } from "@/abis/order";
+import { waitForTransactionReceipt } from '@wagmi/core';
+import { wagmiConfig } from "@/utils/wagmi-config";
+import { useToast } from "@/hooks/use-toast";
+import { erc20Abi } from "@/abis/erc20";
+import { parseEther } from "viem";
 
 const formSchema = z.object({
   hospitalName: z.string({
@@ -46,7 +56,15 @@ const formSchema = z.object({
 });
 
 
-const Order = () => {
+const Order = ({ jumpToSuccess }: { jumpToSuccess: () => void }) => {
+
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const { data: companionList } = useReadContract({
+    abi: RegistryAbi,
+    address: process.env.NEXT_PUBLIC_REGISTRY_ADDRESS as `0x${string}`,
+    functionName: 'getAllCompanions'
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,9 +77,79 @@ const Order = () => {
       note: "",
     },
   });
+  // approve
+  const { writeContract: approveMethod } = useWriteContract({
+    mutation: {
+      onSuccess: async (hash, variables) => {
+        const listReceipt = await waitForTransactionReceipt(wagmiConfig,
+          { hash });
+        if (listReceipt.status === "success") {
+          handleApproveSuccess();
+        }
+      },
+      onError: (error) => {
+        toast({
+          description: "Error: " + ((error as BaseError).shortMessage || error.message)
+        });
+      }
+    }
+  })
+  // 创建订单
+  const { writeContract: createOrder } = useWriteContract({
+    mutation: {
+      onSuccess: async (hash, variables) => {
+        const listReceipt = await waitForTransactionReceipt(wagmiConfig,
+          { hash });
+        if (listReceipt.status === "success") {
+          setIsLoading(false);
+          toast({
+            description: "order created successfully"
+          });
+          jumpToSuccess();
+        }
+      },
+      onError: (error) => {
+        toast({
+          description: "Error: " + ((error as BaseError).shortMessage || error.message)
+        });
+      }
+    }
+  })
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+  // form.setValue("hospitalName", hospitalValue);
+  const selectMethod = (value: string) => {
+    const getPerson = companionList?.find((item) => item.addr === value);
+    if (getPerson) {
+      form.setValue("companion", value);
+      form.setValue("price", `${Number(getPerson.pricePerOrder) * 0.2}`);
+    }
+  }
+
+  const handleApproveSuccess = async () => {
+    createOrder({
+      abi: OrderAbi,
+      address: process.env.NEXT_PUBLIC_ORDER_ADDRESS as `0x${string}`,
+      functionName: "createOrder",
+      args: [
+        form.getValues("companion") as `0x${string}`,
+        BigInt(Math.round(Date.now() / 1000)),
+        BigInt(Math.round(Date.now() / 1000) + 60 * 5),
+        parseEther(form.getValues("price")),
+        form.getValues("hospitalName"),
+        form.getValues("phone"),
+        form.getValues("note")
+      ]
+    });
+  }
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setIsLoading(true);
+    approveMethod({
+      abi: erc20Abi,
+      address: process.env.NEXT_PUBLIC_ERC20_ADDRESS as `0x${string}`,
+      functionName: 'approve',
+      args: [process.env.NEXT_PUBLIC_ORDER_ADDRESS as `0x${string}`, parseEther(data.price)]
+    })
   };
 
   return (
@@ -81,9 +169,9 @@ const Order = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="m@example.com">m@example.com</SelectItem>
-                    <SelectItem value="m@google.com">m@google.com</SelectItem>
-                    <SelectItem value="m@support.com">m@support.com</SelectItem>
+                    {
+                      hospitals.map((item) => <SelectItem value={item.name} key={item.id}>{item.name}</SelectItem>)
+                    }
                   </SelectContent>
                 </Select>
               </FormControl>
@@ -127,16 +215,18 @@ const Order = () => {
             <FormItem>
               <FormLabel className="bold text-lg">companion</FormLabel>
               <FormControl>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select value={field.value} onValueChange={selectMethod}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a companion" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="m@example.com">m@example.com</SelectItem>
-                    <SelectItem value="m@google.com">m@google.com</SelectItem>
-                    <SelectItem value="m@support.com">m@support.com</SelectItem>
+                    {
+                      companionList?.map((item) => {
+                        return <SelectItem value={item.addr} key={item.addr}>{item.name}</SelectItem>
+                      })
+                    }
                   </SelectContent>
                 </Select>
               </FormControl>
@@ -175,7 +265,7 @@ const Order = () => {
           name="note"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Bio</FormLabel>
+              <FormLabel className="bold text-lg">Note</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="note something"
@@ -192,6 +282,9 @@ const Order = () => {
             type="submit"
             className="bg-[--btn-color] w-full"
           >
+            {
+              isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            }
             Confirm
           </Button>
         </div>

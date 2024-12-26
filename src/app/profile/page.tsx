@@ -1,31 +1,31 @@
+"use client"
+
 import BackIcon from "@/components/back-header/back-icon";
 import { Cake, Mail, PhoneCall, UserRound } from "lucide-react";
 import Image from "next/image";
 import ListItem from "./list-item";
 import Link from "next/link";
+import { useAccount, useReadContract } from "wagmi";
+import { OrderAbi } from "@/abis/order";
+import { RegistryAbi } from "@/abis/registry";
 
-const OrderList = [
-  {
-    icon: "/hospital.svg",
-    id: "escort01",
-    name: "susan",
-    introduction: "familiar with neurosurgery",
-    start: "2024-12-20 09:00",
-    end: "2024-12-20 12:00",
-    hospital: "hospital01",
-  },
-  {
-    icon: "/hospital.svg",
-    id: "escort02",
-    name: "lisi",
-    introduction: "familiar with cardiology",
-    start: "2024-12-20 09:00",
-    end: "2024-12-20 18:00",
-    hospital: "hospital02",
-  },
-]
 
 const Profile = () => {
+  // const { data: personDetail } = useReadContract({
+  //   abi: RegistryAbi,
+  //   address: process.env.NEXT_PUBLIC_REGISTRY_ADDRESS as `0x${string}`,
+  //   functionName: 'get'
+  // });
+  const { address } = useAccount();
+
+  const { data: orderList } = useReadContract({
+    abi: OrderAbi,
+    address: process.env.NEXT_PUBLIC_ORDER_ADDRESS as `0x${string}`,
+    functionName: 'getOrdersByUser',
+    args: [address as `0x${string}`]
+  });
+  console.log("orderList", orderList);
+
   return (
     <div className="min-h-dvh bg-[--btn-color] flex flex-col relative pb-7">
       <div className="absolute left-[30px] top-[30px]">
@@ -66,8 +66,8 @@ const Profile = () => {
       <div className="flex flex-col gap-2 mt-10 px-[30px]">
         <span className="text-2xl font-bold text-white">Order List</span>
         {
-          OrderList.map((info, index) => (
-            <Link href={`/order-detail/${info.id}`} key={index}>
+          orderList && orderList.map((info, index) => (
+            <Link href={`/order-detail/${info.Idx.toString()}-${info.companion}`} key={index}>
               <ListItem key={index} info={info} />
             </Link>
           ))

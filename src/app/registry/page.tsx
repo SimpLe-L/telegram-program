@@ -26,6 +26,14 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 
+import { useAccount, usePublicClient, useWriteContract, type BaseError } from "wagmi";
+import { useState } from "react";
+
+import { RegistryAbi } from "@/abis/registry";
+import { useToast } from "@/hooks/use-toast";
+import { calcTime } from "@/utils";
+import { Textarea } from "@/components/ui/textarea";
+
 const formSchema = z.object({
   fullName: z.string({
     required_error: "fullName is required",
@@ -41,6 +49,12 @@ const formSchema = z.object({
   phone: z.string({
     required_error: "phone is required",
   }),
+  introduction: z.string({
+    required_error: "introduction is required",
+  }),
+  icon: z.string({
+    required_error: "icon is required",
+  })
 }).superRefine((data, ctx) => {
 
   if (
@@ -57,7 +71,13 @@ const formSchema = z.object({
 
 const LoginPage = () => {
 
-  // const [isLoading, setIsLoading] = useState(false);
+  const [avatarPath, setAvatarPath] = useState<string>("/default.png");
+  const { toast } = useToast();
+  const { chainId } = useAccount();
+  const client = usePublicClient({ chainId });
+  const [isLoading, setIsLoading] = useState(false);
+  const { writeContractAsync } = useWriteContract();
+
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,22 +86,75 @@ const LoginPage = () => {
       accountType: "user",
       email: "",
       phone: "",
+      introduction: "",
+      icon: "",
     },
   });
 
   const accountType = form.watch("accountType");
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    // console.log(data)
-    router.push(`/home`,)
+  const uploadImg = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
+        method: 'POST',
+        headers: {
+          'pinata_api_key': process.env.NEXT_PUBLIC_PINATA_KEY as string,
+          'pinata_secret_api_key': process.env.NEXT_PUBLIC_PINATA_SECRET as string
+        },
+        body: formData
+      });
+
+      const data = await response.json();
+      const cid = data.IpfsHash;
+      setAvatarPath(`${process.env.NEXT_PUBLIC_PINATA_GATEWAY}${cid}`);
+      form.setValue("icon", `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}${cid}`);
+    }
+  }
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setIsLoading(true);
+    try {
+      const hash = await writeContractAsync({
+        abi: RegistryAbi,
+        address: process.env.NEXT_PUBLIC_REGISTRY_ADDRESS as `0x${string}`,
+        functionName: "registerUser",
+        args: [
+          data.fullName,
+          calcTime(new Date(data.date).getTime()),
+          data.phone,
+          data.email,
+          data.icon,
+          data.introduction,
+          data.accountType === "companion" ? 1 : 0,
+          BigInt(data.price ?? 0)
+        ]
+      });
+      await client?.waitForTransactionReceipt({ hash })
+      setIsLoading(false);
+      toast({
+        description: "registered successfully"
+      });
+      router.push(`/home`,)
+    } catch (er) {
+      setIsLoading(false);
+      toast({
+        description: "something is error"
+      });
+    }
   }
 
   return (
-    <div className="h-dvh">
+    <div className="h-dvh pb-7">
       <div className="flex justify-center w-full">
-        <div className="w-[138px] h-[200px] rounded-b-[70px] bg-[--bg-green] flex justify-center items-end pb-7">
-          <div className="size-[90px] rounded-full flex justify-end items-end border bg-red">
-            <Image src="/camera.svg" width={26} height={26} alt="pick" />
+        <div className="w-[138px] h-[180px] rounded-b-[70px] bg-[--bg-green] flex justify-center items-end pb-7">
+          <div className="size-[90px] rounded-full overflow-hidden relative">
+            <Image src={avatarPath} width={90} height={90} alt="avatar" />
+            <Input className="w-[90px] h-[90px] rounded-full opacity-0 absolute top-0 left-0" onChange={uploadImg} type="file" />
+            <Image src="/camera.svg" width={26} height={26} alt="pick" className="absolute right-2 bottom-0" />
           </div>
         </div>
       </div>
@@ -95,7 +168,7 @@ const LoginPage = () => {
               name="fullName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="bold text-lg">Name</FormLabel>
+                  <FormLabel className="bold text-lg">Full Name</FormLabel>
                   <FormControl>
                     <Input className="h-14 rounded-2xl !bg-[--bg-blue] border-none" placeholder="Enter Name" {...field} />
                   </FormControl>
@@ -218,12 +291,28 @@ const LoginPage = () => {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="introduction"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="bold text-lg">Introduction</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="enter introduction"
+                      className="resize-none !bg-[--bg-blue]"
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
             <div className="w-full flex justify-end gap-2">
               <Button
                 type="submit"
                 className="w-full h-14 mt-3 rounded-2xl bg-[#30C084] hover:bg-[#30C084]"
               >
-                {/* {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} */}
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Submit
               </Button>
             </div>

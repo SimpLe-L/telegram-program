@@ -4,24 +4,24 @@ import React from 'react'
 import { WagmiProvider } from 'wagmi'
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { anvil, sepolia } from 'wagmi/chains'
+import { flowTestnet } from 'wagmi/chains'
 import { http, createConfig } from 'wagmi'
-import { injected, walletConnect } from 'wagmi/connectors'
+// import { injected, walletConnect } from 'wagmi/connectors'
 import '@rainbow-me/rainbowkit/styles.css'
 
 // const projectId = ''
 const config = createConfig({
   // chains: [mainnet, sepolia, anvil],
-  chains: [sepolia],
+  chains: [flowTestnet],
   connectors: [
-    injected(),
+    // injected(),
     // metaMask(),
     // safe(),
   ],
   transports: {
     // [anvil.id]: http(),
     // [mainnet.id]: http(),
-    [sepolia.id]: http(),
+    [flowTestnet.id]: http(),
   },
 })
 
