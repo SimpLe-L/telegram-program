@@ -33,6 +33,7 @@ import { RegistryAbi } from "@/abis/registry";
 import { useToast } from "@/hooks/use-toast";
 import { calcTime } from "@/utils";
 import { Textarea } from "@/components/ui/textarea";
+import useStore from "@/store";
 
 const formSchema = z.object({
   fullName: z.string({
@@ -77,6 +78,7 @@ const LoginPage = () => {
   const client = usePublicClient({ chainId });
   const [isLoading, setIsLoading] = useState(false);
   const { writeContractAsync } = useWriteContract();
+  const setType = useStore(state => state.setType);
 
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -87,7 +89,7 @@ const LoginPage = () => {
       email: "",
       phone: "",
       introduction: "",
-      icon: "",
+      icon: "/default.png",
     },
   });
 
@@ -129,11 +131,12 @@ const LoginPage = () => {
           data.email,
           data.icon,
           data.introduction,
-          data.accountType === "companion" ? 1 : 0,
+          data.accountType === "companion" ? 2 : 1,
           BigInt(data.price ?? 0)
         ]
       });
       await client?.waitForTransactionReceipt({ hash })
+      setType(data.accountType === "companion" ? 2 : 1);
       setIsLoading(false);
       toast({
         description: "registered successfully"

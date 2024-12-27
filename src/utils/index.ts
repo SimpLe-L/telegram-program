@@ -1,5 +1,9 @@
-export function calcTime(time: number | string, formatter: boolean = false) {
-  const timeStamp = new Date(time);
+export function calcTime(time: number | string, formatter: boolean = false, isSecond: boolean = false) {
+  let timeStamp = new Date(time);
+  if (isSecond) {
+    timeStamp = new Date(time as number * 1000);
+  }
+  // const timeStamp = new Date(time);
   const year = timeStamp.getFullYear();
   const dayOfWeek = timeStamp.getDay();
   const month = timeStamp.getMonth() + 1;
@@ -27,24 +31,8 @@ export function calcTime(time: number | string, formatter: boolean = false) {
   const weekDay = weekDays[dayOfWeek];
 
   if (formatter) {
-    return `${year}-${monthFormat}-${dayFormat} ${hoursFormat}:${minuteFormat}:${secondFormat}`;
+    return `${year}-${monthFormat}-${dayFormat} ${hoursFormat}:${minuteFormat}`;
   }
 
   return `${year}-${monthFormat}-${dayFormat}`;
-
-  // if (formatter) {
-  //   // return `${year}-${month}-${day} ${hours}:${minute}:${second}`;
-  //   return `${year}-${monthFormat}-${dayFormat}`;
-  // } else {
-  //   return {
-  //     year,
-  //     month,
-  //     day,
-  //     hours,
-  //     minute,
-  //     second,
-  //     weekDay,
-  //     time
-  //   };
-  // }
 }

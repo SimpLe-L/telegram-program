@@ -104,6 +104,7 @@ const OrderDetail = () => {
   }
 
   const completeOrder = async () => {
+    setIsLoading(true);
     const calcPrice = `${Number(companionInfo!.pricePerOrder) * 0.8}`;
     setPrice(calcPrice);
     approveMethod({
@@ -160,11 +161,11 @@ const OrderDetail = () => {
           <div className="flex justify-between py-8 border-t border-b border-[#E5E5EA]">
             <div className="flex flex-col items-center gap-3">
               <span className="text-[--text-basic] text-lg font-bold">Start Time</span>
-              <span className="text-[#707070] text-sm">{calcTime(Number(orderInfo.startTime), true)}</span>
+              <span className="text-[#707070] text-sm">{calcTime(Number(orderInfo.startTime), true, true)}</span>
             </div>
             <div className="flex flex-col items-center gap-3">
               <span className="text-[--text-basic] text-lg font-bold">End Time</span>
-              <span className="text-[#707070] text-sm">{calcTime(Number(orderInfo.endTime), true)}</span>
+              <span className="text-[#707070] text-sm">{calcTime(Number(orderInfo.endTime), true, true)}</span>
             </div>
           </div>
           <div className="border-b flex justify-between border-[#E5E5EA]">
@@ -180,12 +181,12 @@ const OrderDetail = () => {
         </>
       }
 
-      <div>
+      <div className="flex gap-7 pl-3">
+        <span className="text-[--text-basic] text-lg font-bold">Rate it</span>
         <StarRating
           maxRating={5}
           color="#ffd700"
           size={24}
-          className="star-rating"
           defaultRating={5}
           onSetRating={setRating}
         />

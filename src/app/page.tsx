@@ -1,31 +1,19 @@
-"use client";
+// "use client";
 
-import PrivyLoginButton from "@/components/privy-button";
-// import { usePrivy } from "@privy-io/react-auth";
-import { useRouter } from "next/navigation";
 import LoginButton from "@/components/login-button";
-// import { useEffect } from "react";
+import Image from 'next/image';
 export default function Home() {
 
-  // const { ready, authenticated } = usePrivy();
-  const router = useRouter();
-
-  // useEffect(() => {
-  //   if (authenticated) {
-  //     router.push("/registry");
-  //   }
-  // }, [authenticated]);
-
-  // if (authenticated) {
-  //   router.push("/registry");
-  // }
-
   return (
-    <div className="flex flex-col h-dvh items-center justify-center">
-      {/* {
-        !authenticated && <PrivyLoginButton />
-      } */}
-      <LoginButton />
+    <div className="flex flex-col h-dvh items-center bg-[url('/bg.png')] bg-cover bg-center pt-28">
+      <Image src="/banner.png" alt="Logo" width={400} height={200} className="rounded-s-2xl overflow-hidden" />
+      <div className="flex my-20 gap-4">
+        <span className="font-bold text-[46px] text-white rotate-[-20deg] translate-y-2">Not</span>
+        <span className="font-bold text-[46px] text-white">Alone</span>
+      </div>
+      <div className="mt-40">
+        <LoginButton />
+      </div>
     </div>
   )
 }

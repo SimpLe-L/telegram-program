@@ -12,8 +12,6 @@ interface StarRatingProps {
 const StarRating: React.FC<StarRatingProps> = ({
   maxRating = 5,
   color = '#fcc419',
-  size = 48,
-  className = '',
   defaultRating = 0,
   onSetRating = () => { },
 }) => {
@@ -26,7 +24,7 @@ const StarRating: React.FC<StarRatingProps> = ({
   };
 
   return (
-    <div className={`flex items-center gap-4 ${className}`}>
+    <div className="flex items-center gap-4">
       <div className="flex">
         {Array.from({ length: maxRating }, (_, i) => (
           <Star
@@ -36,7 +34,6 @@ const StarRating: React.FC<StarRatingProps> = ({
             onHoverOut={() => setTempRating(0)}
             full={tempRating ? tempRating >= i + 1 : rating >= i + 1}
             color={color}
-            size={size}
           />
         ))}
       </div>
@@ -49,15 +46,14 @@ interface StarProps {
   full: boolean;
   onHoverIn: () => void;
   onHoverOut: () => void;
-  size: number;
   color: string;
 }
 
-const Star: React.FC<StarProps> = ({ onRate, full, onHoverIn, onHoverOut, size, color }) => {
+const Star: React.FC<StarProps> = ({ onRate, full, onHoverIn, onHoverOut, color }) => {
   return (
     <span
       role="button"
-      className={`block cursor-pointer w-${size} h-${size}`}
+      className="block cursor-pointer w-8 h-8"
       onClick={onRate}
       onMouseEnter={onHoverIn}
       onMouseLeave={onHoverOut}

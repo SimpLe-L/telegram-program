@@ -185,7 +185,7 @@ const Order = () => {
           name="note"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Bio</FormLabel>
+              <FormLabel className="bold text-lg">Note</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="note something"

@@ -16,6 +16,7 @@ import BackHeader from "@/components/back-header"
 import { useReadContract } from "wagmi"
 import { RegistryAbi } from "@/abis/registry"
 import { useState } from "react"
+import { NftAbi } from "@/abis/nft"
 
 const CompanionDetail = () => {
 
@@ -29,6 +30,13 @@ const CompanionDetail = () => {
     functionName: 'getCompanion',
     args: [params.addr as `0x${string}`]
   });
+  const { data: nfts } = useReadContract({
+    abi: NftAbi,
+    address: process.env.NEXT_PUBLIC_NFT_ADDRESS as `0x${string}`,
+    functionName: 'getNFTs',
+    args: [params.addr as `0x${string}`]
+  });
+
   const handleChange = (value: boolean) => {
     setShowDialog(value);
   }
@@ -80,9 +88,11 @@ const CompanionDetail = () => {
               <div className="flex flex-col gap-6 mt-6">
                 <span className="text-[--text-basic] text-lg">NFT</span>
                 <div className="flex gap-3 flex-wrap min-h-40">
-                  <div className="w-[100px] h-[160px] rounded-[20px] bg-red-500"></div>
-                  <div className="w-[100px] h-[160px] rounded-[20px] bg-red-500"></div>
-                  <div className="w-[100px] h-[160px] rounded-[20px] bg-red-500"></div>
+                  {
+                    nfts && nfts.map((nft, index) => (
+                      <Image key={index} src={nft.uri} width={100} height={160} alt="nft" className="rounded-[20px]" />
+                    ))
+                  }
                 </div>
               </div>
             </div>

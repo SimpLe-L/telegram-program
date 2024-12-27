@@ -10,7 +10,7 @@ export const RegistryAbi = [
       },
       {
         "indexed": false,
-        "internalType": "enum Registry.UserType",
+        "internalType": "uint8",
         "name": "userType",
         "type": "uint8"
       }
@@ -296,6 +296,25 @@ export const RegistryAbi = [
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      }
+    ],
+    "name": "getUserType",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "string",
         "name": "_name",
         "type": "string"
@@ -326,7 +345,7 @@ export const RegistryAbi = [
         "type": "string"
       },
       {
-        "internalType": "enum Registry.UserType",
+        "internalType": "uint8",
         "name": "_userType",
         "type": "uint8"
       },
@@ -432,7 +451,7 @@ export const RegistryAbi = [
     "name": "userTypes",
     "outputs": [
       {
-        "internalType": "enum Registry.UserType",
+        "internalType": "uint8",
         "name": "",
         "type": "uint8"
       }

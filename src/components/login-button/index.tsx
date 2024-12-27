@@ -1,9 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../dialog";
 import { Connector, useConnect } from 'wagmi';
 import { useRouter } from "next/navigation";
+import { getAccount, readContract } from '@wagmi/core'
+import { wagmiConfig } from "@/utils/wagmi-config";
+import { RegistryAbi } from "@/abis/registry";
+import useStore from "@/store";
 
 
 const DialogBtn = () => {
@@ -11,11 +15,26 @@ const DialogBtn = () => {
     const { connectors, connect, isSuccess } = useConnect();
     const [openFlag, setOpenFlag] = useState(false);
     const router = useRouter();
+    const setType = useStore(state => state.setType);
 
     useEffect(() => {
         if (isSuccess) {
             setOpenFlag(false);
-            router.push(`/registry`,)
+            const { address } = getAccount(wagmiConfig);
+            (async () => {
+                const result = await readContract(wagmiConfig, {
+                    abi: RegistryAbi,
+                    address: process.env.NEXT_PUBLIC_REGISTRY_ADDRESS as `0x${string}`,
+                    functionName: 'getUserType',
+                    args: [address as `0x${string}`]
+                });
+                if (result) {
+                    setType(result);
+                    router.push(`/home`)
+                } else {
+                    router.push(`/registry`)
+                }
+            })();
         }
     }, [isSuccess]);
 
@@ -31,7 +50,7 @@ const DialogBtn = () => {
     return (
         <Dialog open={openFlag} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-                <div className='h-[40px] px-4 rounded-[16px] bg-[--button-bg] text-[--basic-text] flex justify-center items-center font-bold cursor-pointer'>CONNECT</div>
+                <div className='w-[400px] py-6 rounded-[16px] bg-[--bg-radio] text-white flex justify-center items-center font-bold cursor-pointer'>CONNECT</div>
             </DialogTrigger>
             <DialogContent className='border-[--card-bg]'>
                 <DialogHeader>

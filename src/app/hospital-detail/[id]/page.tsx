@@ -10,7 +10,7 @@ import { hospitals } from "@/data"
 import { useParams } from 'next/navigation'
 import { useReadContract } from 'wagmi';
 import { RegistryAbi } from "@/abis/registry"
-import useStore from "@/store/index";
+// import useStore from "@/store/index";
 
 const companionTypes = [
   {
@@ -38,8 +38,8 @@ const HospitalDetails = () => {
 
   const params = useParams<{ id: string }>()
   const router = useRouter()
-  const setHospital = useStore((state) => state.setHospital)
-  setHospital(params.id)
+  // const setHospital = useStore((state) => state.setHospital)
+  // setHospital(params.id)
   const getHospital = hospitals.find(item => item.id === params.id)
   const [active, setActive] = useState(0);
 

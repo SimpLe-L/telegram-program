@@ -20,8 +20,8 @@ const ListItem = ({ info }: CardProps) => {
   return (
     <div className="w-full p-4 flex justify-between items-start rounded-lg shadow-3xl bg-white">
       <div className="flex gap-3">
-        <div className="w-[64px] h-[64px] bg-[#BBDEFF] rounded-lg flex shrink-0 justify-center items-center">
-          <Image src="/list.svg" width={52} height={52} alt="companionPic" className="rounded-lg" />
+        <div className="w-[64px] h-[64px] rounded-lg flex shrink-0 justify-center items-center">
+          <Image src="/list.svg" width={64} height={64} alt="companionPic" className="rounded-lg" />
         </div>
 
         <div className="h-full flex flex-col gap-2 justify-between">
@@ -30,7 +30,7 @@ const ListItem = ({ info }: CardProps) => {
             <p className="text-[#092543] text-[12px]">{info.message}</p>
           </div>
           <div className="flex gap-2">
-            <span className="text-bold text-[12px]">{`${calcTime(Number(info.startTime), true)} - ${calcTime(Number(info.endTime), true)}`}</span>
+            <span className="text-bold text-[12px]">{`${calcTime(Number(info.startTime), true, true)} - ${calcTime(Number(info.endTime), true, true)}`}</span>
           </div>
         </div>
       </div>

@@ -60,7 +60,7 @@ export default {
 				'3xl': '0px 20px 46px rgba(0, 0, 0, 0.07);',
 				'bar': '0px 20px 80px #000000;',
 				'user': '0px 10px 20px rgba(0, 0, 0, 0.15);'
-			}
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
